@@ -5,10 +5,15 @@
   B（改良版）：依 ### 段落切塊（附小節標題）＋ 混合檢索（BM25 + 向量，RRF 融合）
 """
 
+import hashlib
+import json
+import math
 import os
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
+
+import httpx
 
 
 def _default_data_dir() -> Path:
@@ -24,6 +29,12 @@ TEXTBOOK_DIR = DATA_DIR / "textbook"
 # 版本 A 的固定切塊大小（字元）
 CHUNK_SIZE = 200
 CHUNK_OVERLAP = 50
+
+OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://localhost:11434")
+EMBED_MODEL = os.environ.get("EMBED_MODEL", "bge-m3")
+TOP_K = int(os.environ.get("TOP_K", "3"))
+RAG_VERSION = os.environ.get("RAG_VERSION", "B").upper()
+CACHE_DIR = Path(os.environ.get("CACHE_DIR") or Path(__file__).resolve().parents[1] / ".cache")
 
 
 # ---------- 讀取教材 ----------
@@ -89,3 +100,70 @@ def chunk_fixed(sections: list[Section], size: int = CHUNK_SIZE, overlap: int = 
 def chunk_by_section(sections: list[Section]) -> list[Chunk]:
     """版本 B：一個 ### 段落一塊，前面加上所屬小節與段落標題。"""
     return [Chunk(text=f"{s.parent}｜{s.id} {s.title}\n{s.text}", section_ids=[s.id]) for s in sections]
+
+
+# ---------- 嵌入 ----------
+
+def embed(texts: list[str]) -> list[list[float]]:
+    """呼叫地端 Ollama 嵌入模型，回傳正規化後的向量（長度 1）。"""
+    resp = httpx.post(f"{OLLAMA_URL}/api/embed", json={"model": EMBED_MODEL, "input": texts}, timeout=300)
+    resp.raise_for_status()
+    return [_normalize(v) for v in resp.json()["embeddings"]]
+
+
+def _normalize(v: list[float]) -> list[float]:
+    n = math.sqrt(sum(x * x for x in v)) or 1.0
+    return [x / n for x in v]
+
+
+def cosine(a: list[float], b: list[float]) -> float:
+    return sum(x * y for x, y in zip(a, b))  # 兩邊都已正規化，內積即 cosine
+
+
+# ---------- 索引與檢索 ----------
+
+@dataclass
+class Hit:
+    chunk: Chunk
+    score: float
+
+
+class Index:
+    def __init__(self, version: str):
+        self.version = version
+        self.sections = {s.id: s for s in load_sections()}
+        secs = list(self.sections.values())
+        self.chunks = chunk_fixed(secs) if version == "A" else chunk_by_section(secs)
+        self.vectors = self._load_or_build_vectors()
+
+    def _load_or_build_vectors(self) -> list[list[float]]:
+        """切塊內容或嵌入模型沒變時，直接讀快取，不重算。"""
+        texts = [c.text for c in self.chunks]
+        key = hashlib.sha1(json.dumps([EMBED_MODEL, texts]).encode()).hexdigest()[:12]
+        path = CACHE_DIR / f"index-{self.version}-{key}.json"
+        if path.exists():
+            return json.loads(path.read_text(encoding="utf-8"))
+        vectors = embed(texts)
+        CACHE_DIR.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(vectors), encoding="utf-8")
+        return vectors
+
+    def search(self, query: str, k: int = TOP_K) -> list[Hit]:
+        qv = embed([query])[0]
+        dense = [cosine(qv, v) for v in self.vectors]
+        order = sorted(range(len(self.chunks)), key=lambda i: -dense[i])
+        return [Hit(self.chunks[i], dense[i]) for i in order[:k]]
+
+    @staticmethod
+    def hit_section_ids(hits: list[Hit]) -> list[str]:
+        """命中切塊涵蓋的段落 id，依名次去重。"""
+        return list(dict.fromkeys(sid for h in hits for sid in h.chunk.section_ids))
+
+
+_indexes: dict[str, Index] = {}
+
+
+def get_index(version: str = RAG_VERSION) -> Index:
+    if version not in _indexes:
+        _indexes[version] = Index(version)
+    return _indexes[version]

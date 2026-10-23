@@ -2,6 +2,7 @@
 __pycache__/
 *.pyc
 .venv/
+.cache/
 
 # 課程簡報與講義不公開
 *.pdf

@@ -61,7 +61,7 @@ def handle(session_id: str, message: str) -> ChatResponse:
     context = "\n\n".join(f"[{s.id}] {s.text}" for s in sources)
 
     messages = [
-        {"role": "system", "content": f"你是一個助理，請用繁體中文回答。回答時請在引用處標註段落 id，例如 [1-2-1]。參考資料：\n{context or '（無）'}"},
+        {"role": "system", "content": f"你是國中數學家教，請用繁體中文、以引導學生思考的方式說明觀念，並在引用處標註段落 id，例如 [1-2-1]。參考資料：\n{context or '（無）'}"},
         *history,
         {"role": "user", "content": message},
     ]

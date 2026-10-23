@@ -1,2 +1,16 @@
 {"id": "example-001", "tier": "smoke", "turns": ["你好"], "expect": {"guardrail.triggered": false}}
 {"id": "example-002", "tier": "smoke", "turns": ["我叫小明", "我剛剛說我叫什麼？"], "expect": {"answer_contains_any": ["小明"]}}
+{"id": "my-001", "tier": "keyword", "turns": ["代數式是什麼？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-1-1"]}}
+{"id": "my-002", "tier": "keyword", "turns": ["5 + 3 = 8 算是方程式嗎？為什麼？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-1-2"]}}
+{"id": "my-003", "tier": "keyword", "turns": ["怎麼判斷一個數是不是方程式的解？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-1-4"]}}
+{"id": "my-004", "tier": "keyword", "turns": ["為什麼等號兩邊不能同時除以 0？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-2-2"]}}
+{"id": "my-005", "tier": "keyword", "turns": ["未知數在等號兩邊的時候要怎麼處理？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-3-4"]}}
+{"id": "my-006", "tier": "keyword", "turns": ["遇到有括號的方程式，第一步要做什麼？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-4-1"]}}
+{"id": "my-007", "tier": "keyword", "turns": ["年齡問題要怎麼列式？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-5-2"]}}
+{"id": "my-008", "tier": "paraphrase", "turns": ["天平兩邊同時拿走一樣重的東西還是平衡的，這跟解方程式有什麼關係？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-2-1"]}}
+{"id": "my-009", "tier": "paraphrase", "turns": ["我把數字從等號左邊搬到右邊之後，正負號要怎麼變？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-3-1"]}}
+{"id": "my-010", "tier": "paraphrase", "turns": ["負號後面接一個括號，拆開的時候要注意什麼？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-4-4"]}}
+{"id": "my-011", "tier": "paraphrase", "turns": ["算式裡有好幾個分數很難算，有什麼辦法把它們變成整數？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-4-2"]}}
+{"id": "my-012", "tier": "paraphrase", "turns": ["只知道動物的總數和腳的總數，要怎麼用方程式求出各有幾隻？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-5-4"]}}
+{"id": "my-013", "tier": "paraphrase", "turns": ["走路和騎車速度不一樣，只知道兩種方式差幾分鐘，要怎麼求距離？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-5-5"]}}
+{"id": "my-014", "tier": "paraphrase", "turns": ["算出來的人數是小數或負數，代表什麼？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-5-1"]}}

@@ -12,6 +12,7 @@ from collections import defaultdict
 import httpx
 
 from .schemas import ChatResponse, Guardrail, Source, TraceStep
+from .rag import get_index
 
 OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://localhost:11434")
 LOCAL_MODEL = os.environ.get("LOCAL_MODEL", "qwen2.5:3b")
@@ -27,9 +28,16 @@ def check_guardrail(message: str, trace: list[TraceStep]) -> Guardrail:
 
 
 def retrieve(message: str, trace: list[TraceStep]) -> list[Source]:
-    # TODO: 對 /data 中的教材建索引並檢索；校長組改成查詢成績資料
-    trace.append(TraceStep(step="retrieve", detail="尚未實作，無檢索結果"))
-    return []
+    index = get_index()
+    hits = index.search(message)
+    ids = index.hit_section_ids(hits)  # 依名次去重；A 版一塊可能涵蓋多個段落
+    trace.append(TraceStep(
+        step="retrieve",
+        detail=f"版本 {index.version}，Top-{len(hits)} 命中 {', '.join(ids) or '無'}",
+    ))
+    # 每個段落 id 各列一筆，text 放教材原文，不要放切塊片段
+    return [Source(id=sid, text=index.sections[sid].text) for sid in ids]
+
 
 
 def generate_local(messages: list[dict]) -> str:
@@ -53,10 +61,11 @@ def handle(session_id: str, message: str) -> ChatResponse:
     context = "\n\n".join(f"[{s.id}] {s.text}" for s in sources)
 
     messages = [
-        {"role": "system", "content": f"你是一個助理，請用繁體中文回答。參考資料：\n{context or '（無）'}"},
+        {"role": "system", "content": f"你是一個助理，請用繁體中文回答。回答時請在引用處標註段落 id，例如 [1-2-1]。參考資料：\n{context or '（無）'}"},
         *history,
         {"role": "user", "content": message},
     ]
+
     # TODO: 依需求路由到地端或雲端模型，並如實回報 route
     answer = generate_local(messages)
     trace.append(TraceStep(step="generate", detail=f"使用地端模型 {LOCAL_MODEL}"))

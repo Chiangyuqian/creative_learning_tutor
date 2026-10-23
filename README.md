@@ -50,6 +50,11 @@
 3. **API key**：置於 `.env`，不得 commit。repo 中僅放 `.env.example`。key 若曾 push 至 GitHub，需立即至服務商撤銷。
 4. **資料**：使用 `data/` 與 `tests/` 中助教提供的資料。
 
+## 本組使用模型
+
+- 生成：`qwen2.5:3b`
+- 嵌入：`bge-m3`（`ollama pull bge-m3`）
+
 ## 安裝
 
 ### 1. Ollama
@@ -59,6 +64,7 @@
    ```bash
    ollama pull qwen2.5:3b      # 約 2 GB
    ollama pull qwen2.5:1.5b    # 約 1 GB，記憶體 8 GB 以下適用；需同時修改 .env 的 LOCAL_MODEL
+   ollama pull bge-m3          # 約 1.2 GB，檢索用的嵌入模型（本組必要）
    ```
 3. 測試：`ollama run qwen2.5:3b "你好"`
 

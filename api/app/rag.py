@@ -10,6 +10,7 @@ import json
 import math
 import os
 import re
+from collections import Counter
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -120,6 +121,43 @@ def cosine(a: list[float], b: list[float]) -> float:
     return sum(x * y for x, y in zip(a, b))  # 兩邊都已正規化，內積即 cosine
 
 
+# ---------- BM25（版本 B 的關鍵字檢索） ----------
+
+def tokenize(text: str) -> list[str]:
+    """中文取單字＋相鄰兩字；英數字（含 x、數字）整段當一個詞。"""
+    tokens = []
+    for run in re.findall(r"[一-鿿]+|[A-Za-z0-9]+", text.lower()):
+        if run[0].isascii():
+            tokens.append(run)
+        else:
+            tokens += list(run)
+            tokens += [run[i:i + 2] for i in range(len(run) - 1)]
+    return tokens
+
+
+class BM25:
+    def __init__(self, docs: list[str], k1: float = 1.5, b: float = 0.75):
+        self.k1, self.b = k1, b
+        self.tfs = [Counter(tokenize(d)) for d in docs]          # 每塊裡每個詞出現幾次
+        self.lens = [sum(tf.values()) for tf in self.tfs]        # 每塊的詞數
+        self.avg = sum(self.lens) / len(self.lens)               # 平均詞數
+        df = Counter(t for tf in self.tfs for t in tf)           # 每個詞出現在幾塊裡
+        n = len(docs)
+        self.idf = {t: math.log(1 + (n - c + 0.5) / (c + 0.5)) for t, c in df.items()}
+
+    def scores(self, query: str) -> list[float]:
+        q = tokenize(query)
+        out = []
+        for tf, length in zip(self.tfs, self.lens):
+            s = 0.0
+            for t in q:
+                if t in tf:
+                    f = tf[t]
+                    s += self.idf[t] * f * (self.k1 + 1) / (f + self.k1 * (1 - self.b + self.b * length / self.avg))
+            out.append(s)
+        return out
+
+
 # ---------- 索引與檢索 ----------
 
 @dataclass
@@ -135,6 +173,7 @@ class Index:
         secs = list(self.sections.values())
         self.chunks = chunk_fixed(secs) if version == "A" else chunk_by_section(secs)
         self.vectors = self._load_or_build_vectors()
+        self.bm25 = BM25([c.text for c in self.chunks]) if version == "B" else None
 
     def _load_or_build_vectors(self) -> list[list[float]]:
         """切塊內容或嵌入模型沒變時，直接讀快取，不重算。"""
@@ -151,8 +190,19 @@ class Index:
     def search(self, query: str, k: int = TOP_K) -> list[Hit]:
         qv = embed([query])[0]
         dense = [cosine(qv, v) for v in self.vectors]
-        order = sorted(range(len(self.chunks)), key=lambda i: -dense[i])
-        return [Hit(self.chunks[i], dense[i]) for i in order[:k]]
+        if self.bm25 is None:  # 版本 A：只用向量
+            order = sorted(range(len(self.chunks)), key=lambda i: -dense[i])
+            return [Hit(self.chunks[i], dense[i]) for i in order[:k]]
+
+        # 版本 B：Reciprocal Rank Fusion，score = Σ 1 / (60 + 名次)
+        sparse = self.bm25.scores(query)
+        fused = [0.0] * len(self.chunks)
+        for ranking in (dense, sparse):
+            order = sorted(range(len(self.chunks)), key=lambda i: -ranking[i])
+            for rank, i in enumerate(order, start=1):
+                fused[i] += 1 / (60 + rank)
+        order = sorted(range(len(self.chunks)), key=lambda i: -fused[i])
+        return [Hit(self.chunks[i], fused[i]) for i in order[:k]]
 
     @staticmethod
     def hit_section_ids(hits: list[Hit]) -> list[str]:

@@ -4,7 +4,7 @@
 - 組員：
     - 江妤倩 / D115526007 / Chiangyuqian
     - 洪婉玲 / D115522089 / lingjing1
-- 繳交 commit：（`git rev-parse midterm` 的結果）
+- 繳交 commit：a81846a
 
 ## 1. 系統架構
 

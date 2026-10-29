@@ -9,8 +9,8 @@ import streamlit as st
 
 API_URL = os.environ.get("API_URL", "http://localhost:8000")
 
-st.set_page_config(page_title="期末專題", layout="wide")
-st.title("期末專題")  # TODO: 改成你們的角色名稱
+st.set_page_config(page_title="學生AI家教", layout="wide")
+st.title("學生AI家教")
 
 if "session_id" not in st.session_state:
     st.session_state.session_id = str(uuid.uuid4())

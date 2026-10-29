@@ -1,16 +1,29 @@
-{"id": "example-001", "tier": "smoke", "turns": ["你好"], "expect": {"guardrail.triggered": false}}
-{"id": "example-002", "tier": "smoke", "turns": ["我叫小明", "我剛剛說我叫什麼？"], "expect": {"answer_contains_any": ["小明"]}}
-{"id": "my-001", "tier": "keyword", "turns": ["代數式是什麼？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-1-1"]}}
-{"id": "my-002", "tier": "keyword", "turns": ["5 + 3 = 8 算是方程式嗎？為什麼？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-1-2"]}}
-{"id": "my-003", "tier": "keyword", "turns": ["怎麼判斷一個數是不是方程式的解？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-1-4"]}}
-{"id": "my-004", "tier": "keyword", "turns": ["為什麼等號兩邊不能同時除以 0？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-2-2"]}}
-{"id": "my-005", "tier": "keyword", "turns": ["未知數在等號兩邊的時候要怎麼處理？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-3-4"]}}
-{"id": "my-006", "tier": "keyword", "turns": ["遇到有括號的方程式，第一步要做什麼？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-4-1"]}}
-{"id": "my-007", "tier": "keyword", "turns": ["年齡問題要怎麼列式？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-5-2"]}}
-{"id": "my-008", "tier": "paraphrase", "turns": ["天平兩邊同時拿走一樣重的東西還是平衡的，這跟解方程式有什麼關係？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-2-1"]}}
-{"id": "my-009", "tier": "paraphrase", "turns": ["我把數字從等號左邊搬到右邊之後，正負號要怎麼變？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-3-1"]}}
-{"id": "my-010", "tier": "paraphrase", "turns": ["負號後面接一個括號，拆開的時候要注意什麼？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-4-4"]}}
-{"id": "my-011", "tier": "paraphrase", "turns": ["算式裡有好幾個分數很難算，有什麼辦法把它們變成整數？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-4-2"]}}
-{"id": "my-012", "tier": "paraphrase", "turns": ["只知道動物的總數和腳的總數，要怎麼用方程式求出各有幾隻？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-5-4"]}}
-{"id": "my-013", "tier": "paraphrase", "turns": ["走路和騎車速度不一樣，只知道兩種方式差幾分鐘，要怎麼求距離？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-5-5"]}}
-{"id": "my-014", "tier": "paraphrase", "turns": ["算出來的人數是小數或負數，代表什麼？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-5-1"]}}
+{"id": "ev-001", "tier": "keyword", "turns": ["什麼是代數式？3 × x 為什麼可以寫成 3x？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-1-1"]}}
+{"id": "ev-002", "tier": "keyword", "turns": ["方程式的左式和右式是指哪裡？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-1-2"]}}
+{"id": "ev-003", "tier": "keyword", "turns": ["一元一次方程式的「元」和「次」分別是什麼意思？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-1-3"]}}
+{"id": "ev-004", "tier": "keyword", "turns": ["方程式的解是什麼意思？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-1-4"]}}
+{"id": "ev-005", "tier": "keyword", "turns": ["等量乘法公理和等量除法公理是什麼？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-2-2"]}}
+{"id": "ev-006", "tier": "keyword", "turns": ["移項時，未知數的係數是乘的要怎麼移？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-3-2"]}}
+{"id": "ev-007", "tier": "keyword", "turns": ["驗算的時候，要把解代回哪裡檢查？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-3-5"]}}
+{"id": "ev-008", "tier": "keyword", "turns": ["去括號的時候要用什麼方法展開？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-4-1"]}}
+{"id": "ev-009", "tier": "keyword", "turns": ["去分母時，兩邊要同乘什麼數？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-4-2"]}}
+{"id": "ev-010", "tier": "keyword", "turns": ["價格問題要怎麼設未知數？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-5-3"]}}
+{"id": "ev-011", "tier": "keyword", "turns": ["行程問題要怎麼列式？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-5-5"]}}
+{"id": "ev-012", "tier": "paraphrase", "turns": ["題目裡有一個數不知道是多少，可以先用字母代替嗎？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-1-1"]}}
+{"id": "ev-013", "tier": "paraphrase", "turns": ["只要有等號的算式，就一定是方程式嗎？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-1-2"]}}
+{"id": "ev-014", "tier": "paraphrase", "turns": ["x 有平方的式子，也算是這一章在學的那種方程式嗎？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-1-3"]}}
+{"id": "ev-015", "tier": "paraphrase", "turns": ["等號兩邊同時加上一樣的數，為什麼還會相等？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-2-1"]}}
+{"id": "ev-016", "tier": "paraphrase", "turns": ["等號兩邊可以同時乘上同一個數嗎？有什麼要小心的？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-2-2"]}}
+{"id": "ev-017", "tier": "paraphrase", "turns": ["把等號左邊減掉的數搬到右邊，要變成加還是減？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-3-1"]}}
+{"id": "ev-018", "tier": "paraphrase", "turns": ["兩邊都有 x 的時候，要把 x 集中到哪一邊？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-3-4"]}}
+{"id": "ev-019", "tier": "paraphrase", "turns": ["數字後面接著一個括號，要先怎麼拆開？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-4-1"]}}
+{"id": "ev-020", "tier": "paraphrase", "turns": ["我把分母去掉以後答案總是不對，可能是哪裡漏掉了？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-4-4"]}}
+{"id": "ev-021", "tier": "paraphrase", "turns": ["文字題算完以後，寫答案時要注意什麼？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-5-1"]}}
+{"id": "ev-022", "tier": "paraphrase", "turns": ["爸爸過幾年會是小孩的兩倍大，這種題目怎麼設 x？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-5-2"]}}
+{"id": "ev-023", "tier": "paraphrase", "turns": ["知道總共花多少錢和兩樣東西差幾元，要怎麼列式？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-5-3"]}}
+{"id": "ev-024", "tier": "paraphrase", "turns": ["籠子裡有兩種動物，腳的數量不一樣，要怎麼列方程式？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-5-4"]}}
+{"id": "ev-025", "tier": "paraphrase", "turns": ["兩種交通方式速度不同，只知道時間差幾分鐘，要怎麼求路程？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-5-5"]}}
+{"id": "ev-026", "tier": "paraphrase", "turns": ["解題的時候應該先處理加減，還是先處理乘除？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-3-3"]}}
+{"id": "ev-027", "tier": "hard", "turns": ["3x + 5 = 20 為什麼要先移 5 再除以 3？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-3-3"]}}
+{"id": "ev-028", "tier": "hard", "turns": ["-(x-3) 拆開後應該是 -x-3 還是 -x+3？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-4-4"]}}
+{"id": "ev-029", "tier": "hard", "turns": ["算出來的年齡是負的，是不是哪裡算錯了？"], "expect": {"guardrail.action": "pass", "sources_include": ["1-5-1"]}}
